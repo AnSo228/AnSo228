@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AnSo | Art-gallery</title>
+    <style>
+
+    .menu {
+        display:flex;
+        max-width: 100%;
+        height: auto
+    }
+    .frame{
+        display:inline-block;
+        width: 50%;
+    }
+    .cap{
+        width: 100%;
+    }
+    .logo{
+        text-align: center;
+        width: 100%;
+    }
+    .langs{
+        text-align: left;
+        padding-left: 30px;
+        //background-color: rgb(175, 0, 0) ;
+        width: 300px;
+    }
+    .button{
+        margin: 1em;
+        text-align: center;
+        border-radius: 10px;
+        background-color: rgb(255, 232, 201);
+        cursor: pointer;
+    }
+
+    .slider{
+        text-align: center;
+        height: 500px;
+        width: 500px;
+        outline: black;
+        background-color: rgb(255, 255, 255);
+        position: relative;
+        left: 50%;
+        height: auto;
+        transform: translate(-50%);
+    }
+    .seti{
+    left: 50%;
+        height: auto;
+    }
+
+    </style>
+</head>
+<body>
+<div id="app" v-cloak>
+    <div class="cap menu">
+        <div class="logo frame">
+            <img style="height: 150px; position: relative; top: 10%;" src="AnSo.jpg" alt="LOGO">
+        </div>
+        <div class="langs frame">
+            <div id="google_translate_element"></div>
+        </div>
+    </div>
+    <div class="menu">
+        <div class="frame button" @click="tab = 'Главная'">Главная</div>
+        <div class="frame button" @click="tab = 'Галерея'">Галерея</div>
+        <div class="frame button" @click="tab = 'Эскизы'">Эскизы</div>
+    </div>
+
+    <div v-if="tab === 'Главная'">
+        <div class="slider">
+            <div style="position:absolute; top: 50%; left: 10px; cursor: pointer;" @click="left"><</div>
+            <div style="position:absolute; top: 50%; right: 10px; cursor: pointer;" @click="right">></div>
+
+            <div class="slide" v-for="(photo, index) in photos">
+                <h2 v-if="num == index">{{photo.title}}</h2>
+                <img style="width:400px;" v-if="num == index" :src="photo.url">
+            </div>
+
+            <input v-for="(photo, index) in photos" type="radio" :value="index" v-model="num">
+        </div>
+    </div>
+
+    <div v-if="tab === 'Галерея'">
+        <div v-for="(photo, index) in photos">
+            <img :src="photo.url">
+        </div>
+    </div>
+<div class="seti">
+<a href="https://www.instagram.com/avs1056/"><img src="Instlogo.png" width="50" 
+   height="50" alt="Instagram"></a>
+<a href="https://vk.com/club192585847"><img src="Vklogo.png" width="50" 
+   height="50" alt="VKontakte"></a>
+</div>
+</div>
+</body>
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script src="https://unpkg.com/vue"></script>
+<script>
+function googleTranslateElementInit() {
+new google.translate.TranslateElement({
+pageLanguage: 'ru'
+}, 'google_translate_element');
+}
+</script>
+<script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<script type="text/javascript">
+	new Vue({
+		el:'#app',
+		data: {
+			photos: [],
+            num: 0,
+            tab: 'Главная',
+		},
+		methods: {
+			left(){
+                if(this.num!=0) this.num--
+                else this.num = this.photos.length-1
+            },
+            right(){
+                if(this.num!=this.photos.length-1) this.num++
+                else this.num = 0
+            }
+		},
+		mounted() {
+            axios.get('https://api.npoint.io/0e1c6662f95e7858fbca')
+			.then(response => {
+				this.photos = response.data
+			});
+		}
+    })
+</script>
+</html>
